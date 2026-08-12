@@ -22,25 +22,72 @@
       <div class="logo-icon" aria-hidden="true">🎓</div>
       <div class="brand-text">
         <h1 class="institution-name">Centro Educativo San Martín</h1>
-        <span class="prototype-badge" aria-label="Versión del prototipo">Intranet Escolar v0.1.0</span>
+        <span class="prototype-badge" aria-label="Versión del prototipo">Intranet Escolar v1.0.0</span>
       </div>
     </div>
 
-    <!-- Selector de vista de rol simulado -->
-    <div class="role-selector-container">
-      <label for="role-select" class="role-label">Vista Activa:</label>
-      <select id="role-select" class="role-dropdown" aria-label="Seleccionar rol activo para simular la vista">
-        <option value="admin">Administrador</option>
-        <option value="docente">Docente</option>
-        <option value="estudiante" selected>Estudiante / Familia</option>
-      </select>
+    <!-- Información de Sesión Activa y Botón de Cerrar Sesión -->
+    <div id="user-session-info" class="user-session-info hidden" aria-label="Información del usuario autenticado">
+      <div class="user-details">
+        <span id="session-user-name" class="user-name">Usuario</span>
+        <span id="session-user-role" class="role-badge">Rol</span>
+      </div>
+      <button id="btn-logout" class="btn btn-sm btn-secondary" aria-label="Cerrar sesión activa">Cerrar Sesión</button>
     </div>
   </header>
 
   <!-- ========================================== -->
+  <!-- VISTA DE INICIO DE SESIÓN (LOGIN)          -->
+  <!-- ========================================== -->
+  <div id="login-container" class="login-container">
+    <div class="card login-card" role="dialog" aria-labelledby="login-title">
+      <div class="login-header">
+        <div class="login-logo">🎓</div>
+        <h2 id="login-title" class="login-title">Acceso a Intranet Escolar</h2>
+        <p class="login-subtitle">Ingrese sus credenciales de acceso institucional</p>
+      </div>
+
+      <!-- Alerta de Error de Autenticación -->
+      <div id="login-error" class="login-error hidden" role="alert">
+        ⚠️ Usuario o contraseña incorrectos. Por favor intente de nuevo.
+      </div>
+
+      <form id="form-login" class="app-form">
+        <div class="form-group">
+          <label for="login-username">Usuario / Correo Electrónico:</label>
+          <input type="text" id="login-username" name="username" placeholder="Ej. admin, profe, alumno" required aria-required="true" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Contraseña:</label>
+          <input type="password" id="login-password" name="password" placeholder="••••••••" required aria-required="true" autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+      </form>
+
+      <!-- Panel de Credenciales de Prueba Rápidas -->
+      <div class="test-credentials">
+        <p class="credentials-title">🔑 Credenciales de Prueba Rápida (Haz clic para usar):</p>
+        <div class="credentials-buttons">
+          <button type="button" class="btn-cred" data-user="admin" data-pass="123">
+            <strong>👑 Admin:</strong> <code>admin</code> / <code>123</code>
+          </button>
+          <button type="button" class="btn-cred" data-user="profe" data-pass="123">
+            <strong>👨‍🏫 Docente:</strong> <code>profe</code> / <code>123</code>
+          </button>
+          <button type="button" class="btn-cred" data-user="alumno" data-pass="123">
+            <strong>🎓 Estudiante:</strong> <code>alumno</code> / <code>123</code>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
   <!-- BARRA DE NAVEGACIÓN                        -->
   <!-- ========================================== -->
-  <nav class="main-navigation" aria-label="Navegación principal de la intranet">
+  <nav id="main-nav" class="main-navigation hidden" aria-label="Navegación principal de la intranet">
     <ul class="nav-list">
       <li class="nav-item">
         <button class="nav-btn active" data-section="comunicados-section" aria-controls="comunicados-section" aria-selected="true">
@@ -66,7 +113,7 @@
   <!-- ========================================== -->
   <!-- CONTENIDO PRINCIPAL                        -->
   <!-- ========================================== -->
-  <main id="main-content" class="main-container" role="main">
+  <main id="main-content" class="main-container hidden" role="main">
 
     <!-- ------------------------------------------ -->
     <!-- SECCIÓN 1: COMUNICADOS Y TABLÓN DE AVISOS  -->
@@ -225,36 +272,6 @@
               <td>96%</td>
               <td><span class="status-pill status-approved">Aprobado</span></td>
             </tr>
-            <tr>
-              <td>EST-002</td>
-              <td>Alejandro Gómez Silva</td>
-              <td>Matemáticas Avanzadas</td>
-              <td>8.0</td>
-              <td>7.5</td>
-              <td><strong>7.75</strong></td>
-              <td>90%</td>
-              <td><span class="status-pill status-approved">Aprobado</span></td>
-            </tr>
-            <tr>
-              <td>EST-003</td>
-              <td>Carlos Eduardo Méndez</td>
-              <td>Matemáticas Avanzadas</td>
-              <td>5.5</td>
-              <td>5.0</td>
-              <td><strong>5.25</strong></td>
-              <td>75%</td>
-              <td><span class="status-pill status-reprobated">Reprobado</span></td>
-            </tr>
-            <tr>
-              <td>EST-004</td>
-              <td>Mariana López Peralta</td>
-              <td>Matemáticas Avanzadas</td>
-              <td>10.0</td>
-              <td>9.8</td>
-              <td><strong>9.90</strong></td>
-              <td>100%</td>
-              <td><span class="status-pill status-approved">Aprobado</span></td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -332,27 +349,7 @@
               <td><span class="role-badge role-admin">Administrador</span></td>
               <td><span class="status-pill status-active">Activo</span></td>
               <td>
-                <button class="btn btn-sm btn-secondary" aria-label="Editar usuario Dra. Beatriz Fuentes Rivera">Editar</button>
-              </td>
-            </tr>
-            <tr>
-              <td>USR-102</td>
-              <td>Prof. Roberto Martínez Castro</td>
-              <td>roberto.martinez@sanmartin.edu</td>
-              <td><span class="role-badge role-docente">Docente</span></td>
-              <td><span class="status-pill status-active">Activo</span></td>
-              <td>
-                <button class="btn btn-sm btn-secondary" aria-label="Editar usuario Prof. Roberto Martínez Castro">Editar</button>
-              </td>
-            </tr>
-            <tr>
-              <td>USR-103</td>
-              <td>Sofía Rodríguez Martínez</td>
-              <td>sofia.rodriguez@sanmartin.edu</td>
-              <td><span class="role-badge role-estudiante">Estudiante</span></td>
-              <td><span class="status-pill status-active">Activo</span></td>
-              <td>
-                <button class="btn btn-sm btn-secondary" aria-label="Editar usuario Sofía Rodríguez Martínez">Editar</button>
+                <button class="btn btn-sm btn-secondary" aria-label="Editar usuario">Editar</button>
               </td>
             </tr>
           </tbody>
@@ -368,7 +365,7 @@
   <footer class="main-footer" role="contentinfo">
     <div class="footer-container">
       <p class="footer-copyright">&copy; 2026 Centro Educativo San Martín. Todos los derechos reservados.</p>
-      <p class="footer-credits">Desarrollado para el prototipo de Intranet Escolar v0.1.0.</p>
+      <p class="footer-credits">Desarrollado para el prototipo de Intranet Escolar v1.0.0.</p>
       <p class="footer-disclaimer" aria-label="Aviso de privacidad">Aviso: Este sistema contiene información confidencial y de uso exclusivo institucional.</p>
     </div>
   </footer>
