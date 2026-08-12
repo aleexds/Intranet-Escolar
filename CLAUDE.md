@@ -52,11 +52,14 @@ Arquitectónicamente, el proyecto se plantea en su etapa actual como una aplicac
 
 ## 6. Memoria del Proyecto
 
-- **Estado Actual**: Versión `0.1.0`. Prototipo funcional inicial creado con la estructura base de archivos frontend (`index.html`, `styles.css`, `app.js`) y el cuerpo completo de documentación en Markdown.
+- **Estado Actual (v1.0.0 - 12 de Agosto de 2026)**: Prototipo funcional completo finalizado y totalmente documentado. Se implementó la maquetación HTML5 semántica en `index.html`, el sistema de diseño visual responsive en `styles.css` y la interactividad reactiva por roles en `app.js`.
 - **Estructura de Carpetas**:
-  - `/`: Archivos principales del prototipo y documentación raíz.
-  - `/docs`: Documentación detallada (`requerimientos.md`, `arquitectura.md`).
-- **Decisiones Previas**: Se optó por una arquitectura frontend pura en Vanilla JS para acelerar la prototipación y permitir pruebas directas en el navegador.
+  - `/`: Archivos principales del prototipo (`index.html`, `styles.css`, `app.js`) y documentación raíz (`README.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`).
+  - `/docs`: Documentación técnica detallada (`requerimientos.md`, `arquitectura.md`).
+- **Decisiones Técnicas Finales (2026-08-12)**:
+  1. *Maquetación HTML5*: Uso de componentes semánticos (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`) con atributos de accesibilidad WCAG básicos (`aria-controls`, `aria-selected`, `aria-label`, `sr-only`).
+  2. *Sistema de Estilos*: Arquitectura de diseño con variables CSS (`:root`) basada en la paleta institucional (azules navy/slate), flexbox/grid layout y *media queries* para responsividad completa.
+  3. *Lógica e Interactividad JS*: Enfoque Vanilla JS (ES6+) con un estado plano global (`state`), simulación de permisos según rol activo (*Estudiante*, *Docente*, *Administrador*), recálculo en tiempo real de promedios de notas `(Trabajos + Examen) / 2`, sanitización de datos (`escapeHTML`) y persistencia del lado del cliente mediante `localStorage`.
 
 ---
 
