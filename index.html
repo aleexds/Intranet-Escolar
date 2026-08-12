@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Plataforma de Intranet Escolar para la gestión académica, comunicación y administración educativa.">
+  <title>Intranet Escolar - Centro Educativo San Martín</title>
+  
+  <!-- Hoja de Estilos Principales -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Lógica JavaScript Principal (Diferido) -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- ENCABEZADO PRINCIPAL                        -->
+  <!-- ========================================== -->
+  <header class="top-header" role="banner">
+    <div class="header-brand">
+      <div class="logo-icon" aria-hidden="true">🎓</div>
+      <div class="brand-text">
+        <h1 class="institution-name">Centro Educativo San Martín</h1>
+        <span class="prototype-badge" aria-label="Versión del prototipo">Intranet Escolar v0.1.0</span>
+      </div>
+    </div>
+
+    <!-- Selector de vista de rol simulado -->
+    <div class="role-selector-container">
+      <label for="role-select" class="role-label">Vista Activa:</label>
+      <select id="role-select" class="role-dropdown" aria-label="Seleccionar rol activo para simular la vista">
+        <option value="admin">Administrador</option>
+        <option value="docente">Docente</option>
+        <option value="estudiante" selected>Estudiante / Familia</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BARRA DE NAVEGACIÓN                        -->
+  <!-- ========================================== -->
+  <nav class="main-navigation" aria-label="Navegación principal de la intranet">
+    <ul class="nav-list">
+      <li class="nav-item">
+        <button class="nav-btn active" data-section="comunicados-section" aria-controls="comunicados-section" aria-selected="true">
+          <span class="nav-icon" aria-hidden="true">📢</span>
+          <span class="nav-text">Inicio / Comunicados</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-btn" data-section="calificaciones-section" aria-controls="calificaciones-section" aria-selected="false">
+          <span class="nav-icon" aria-hidden="true">📊</span>
+          <span class="nav-text">Calificaciones y Asistencia</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-btn" data-section="usuarios-section" aria-controls="usuarios-section" aria-selected="false">
+          <span class="nav-icon" aria-hidden="true">👥</span>
+          <span class="nav-text">Gestión de Usuarios</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- CONTENIDO PRINCIPAL                        -->
+  <!-- ========================================== -->
+  <main id="main-content" class="main-container" role="main">
+
+    <!-- ------------------------------------------ -->
+    <!-- SECCIÓN 1: COMUNICADOS Y TABLÓN DE AVISOS  -->
+    <!-- ------------------------------------------ -->
+    <section id="comunicados-section" class="content-section active-section" aria-labelledby="heading-comunicados">
+      <div class="section-header">
+        <h2 id="heading-comunicados" class="section-title">Avisos y Comunicados Institucionales</h2>
+        <p class="section-subtitle">Novedades, eventos y anuncios oficiales del centro educativo.</p>
+      </div>
+
+      <!-- Formulario para publicar aviso (Visible solo para Admin/Docente) -->
+      <div id="publish-notice-container" class="card form-card" aria-labelledby="heading-form-notice">
+        <h3 id="heading-form-notice" class="card-title">📝 Publicar Nuevo Aviso</h3>
+        <form id="form-publicar-aviso" class="app-form" aria-describedby="form-notice-desc">
+          <p id="form-notice-desc" class="sr-only">Formulario para crear y publicar un aviso institucional.</p>
+          
+          <div class="form-group">
+            <label for="notice-title">Título del Aviso:</label>
+            <input type="text" id="notice-title" name="notice-title" placeholder="Ej. Inicio de Periodo de Exámenes" required aria-required="true">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="notice-category">Categoría:</label>
+              <select id="notice-category" name="notice-category" required aria-required="true">
+                <option value="General">General</option>
+                <option value="Académico">Académico</option>
+                <option value="Deportes">Deportes</option>
+                <option value="Urgente">Urgente</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="notice-target">Destinatarios:</label>
+              <select id="notice-target" name="notice-target" required aria-required="true">
+                <option value="Todos">Toda la Comunidad</option>
+                <option value="Estudiantes">Solo Estudiantes</option>
+                <option value="Docentes">Solo Docentes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="notice-content">Contenido del Aviso:</label>
+            <textarea id="notice-content" name="notice-content" rows="3" placeholder="Escriba aquí los detalles del anuncio..." required aria-required="true"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Publicar Comunicado</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tablón de Tarjetas de Comunicados -->
+      <div id="notice-board" class="cards-grid" role="region" aria-live="polite" aria-label="Lista de comunicados publicados">
+        
+        <article class="card notice-card urgent">
+          <div class="card-header">
+            <span class="badge badge-danger">Urgente</span>
+            <time datetime="2026-08-12">12 de Agosto, 2026</time>
+          </div>
+          <h3 class="notice-card-title">Reunión General de Padres de Familia</h3>
+          <p class="notice-card-text">Se convoca a todos los tutores a la asamblea informativa del primer trimestre este viernes a las 17:00 hrs en el auditorio principal.</p>
+          <div class="notice-card-footer">
+            <span class="author">Por: Dirección Académica</span>
+          </div>
+        </article>
+
+        <article class="card notice-card">
+          <div class="card-header">
+            <span class="badge badge-info">Académico</span>
+            <time datetime="2026-08-10">10 de Agosto, 2026</time>
+          </div>
+          <h3 class="notice-card-title">Publicación de Horarios de Exámenes Parciales</h3>
+          <p class="notice-card-text">Los horarios de las evaluaciones correspondientes al bloque 1 ya se encuentran disponibles en la sección de Calificaciones.</p>
+          <div class="notice-card-footer">
+            <span class="author">Por: Coordinación de Estudios</span>
+          </div>
+        </article>
+
+        <article class="card notice-card">
+          <div class="card-header">
+            <span class="badge badge-success">General</span>
+            <time datetime="2026-08-08">8 de Agosto, 2026</time>
+          </div>
+          <h3 class="notice-card-title">Inscripciones para Talleres Extracurriculares</h3>
+          <p class="notice-card-text">Queda abierta la convocatoria para inscribirse a los clubes de Robótica, Ajedrez, Teatro y Baloncesto del ciclo escolar.</p>
+          <div class="notice-card-footer">
+            <span class="author">Por: Departamento de Deportes y Cultura</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ------------------------------------------ -->
+    <!-- SECCIÓN 2: CALIFICACIONES Y ASISTENCIA    -->
+    <!-- ------------------------------------------ -->
+    <section id="calificaciones-section" class="content-section" aria-labelledby="heading-calificaciones" hidden>
+      <div class="section-header">
+        <h2 id="heading-calificaciones" class="section-title">Registro de Calificaciones y Asistencia</h2>
+        <p class="section-subtitle">Consulta y gestión del rendimiento académico y la asistencia de los estudiantes.</p>
+      </div>
+
+      <!-- Filtros de Asignatura y Periodo -->
+      <div class="filter-bar card" role="search" aria-label="Filtros de calificaciones">
+        <div class="filter-group">
+          <label for="filter-periodo">Periodo Escolar:</label>
+          <select id="filter-periodo">
+            <option value="1">Primer Parcial</option>
+            <option value="2">Segundo Parcial</option>
+            <option value="3">Examen Final</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-materia">Asignatura:</label>
+          <select id="filter-materia">
+            <option value="matematicas">Matemáticas Avanzadas</option>
+            <option value="historia">Historia Universal</option>
+            <option value="ciencias">Ciencias de la Tierra</option>
+            <option value="lengua">Lengua y Literatura</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-grupo">Grupo:</label>
+          <select id="filter-grupo">
+            <option value="101">Grupo 101-A</option>
+            <option value="102">Grupo 102-B</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tabla Semántica de Calificaciones -->
+      <div class="table-responsive card">
+        <table class="data-table" aria-label="Tabla de calificaciones y asistencias de alumnos">
+          <caption>Listado de alumnos y registro de notas correspondientes</caption>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Estudiante</th>
+              <th scope="col">Asignatura</th>
+              <th scope="col">Nota Trabajos</th>
+              <th scope="col">Nota Examen</th>
+              <th scope="col">Promedio</th>
+              <th scope="col">Asistencia (%)</th>
+              <th scope="col">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>EST-001</td>
+              <td>Sofía Rodríguez Martínez</td>
+              <td>Matemáticas Avanzadas</td>
+              <td>9.5</td>
+              <td>9.0</td>
+              <td><strong>9.25</strong></td>
+              <td>96%</td>
+              <td><span class="status-pill status-approved">Aprobado</span></td>
+            </tr>
+            <tr>
+              <td>EST-002</td>
+              <td>Alejandro Gómez Silva</td>
+              <td>Matemáticas Avanzadas</td>
+              <td>8.0</td>
+              <td>7.5</td>
+              <td><strong>7.75</strong></td>
+              <td>90%</td>
+              <td><span class="status-pill status-approved">Aprobado</span></td>
+            </tr>
+            <tr>
+              <td>EST-003</td>
+              <td>Carlos Eduardo Méndez</td>
+              <td>Matemáticas Avanzadas</td>
+              <td>5.5</td>
+              <td>5.0</td>
+              <td><strong>5.25</strong></td>
+              <td>75%</td>
+              <td><span class="status-pill status-reprobated">Reprobado</span></td>
+            </tr>
+            <tr>
+              <td>EST-004</td>
+              <td>Mariana López Peralta</td>
+              <td>Matemáticas Avanzadas</td>
+              <td>10.0</td>
+              <td>9.8</td>
+              <td><strong>9.90</strong></td>
+              <td>100%</td>
+              <td><span class="status-pill status-approved">Aprobado</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------ -->
+    <!-- SECCIÓN 3: GESTIÓN DE USUARIOS             -->
+    <!-- ------------------------------------------ -->
+    <section id="usuarios-section" class="content-section" aria-labelledby="heading-usuarios" hidden>
+      <div class="section-header">
+        <h2 id="heading-usuarios" class="section-title">Administración y Gestión de Usuarios</h2>
+        <p class="section-subtitle">Registro, alta de nuevos integrantes y consulta del directorio institucional.</p>
+      </div>
+
+      <!-- Formulario para agregar nuevo usuario -->
+      <div class="card form-card" aria-labelledby="heading-form-user">
+        <h3 id="heading-form-user" class="card-title">👤 Registrar Nuevo Usuario</h3>
+        <form id="form-registrar-usuario" class="app-form" aria-describedby="form-user-desc">
+          <p id="form-user-desc" class="sr-only">Formulario para dar de alta nuevos administradores, docentes o estudiantes.</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="user-fullname">Nombre Completo:</label>
+              <input type="text" id="user-fullname" name="user-fullname" placeholder="Ej. Ana Lucía Morales" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="user-email">Correo Electrónico:</label>
+              <input type="email" id="user-email" name="user-email" placeholder="ejemplo@sanmartin.edu" required aria-required="true">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="user-role">Rol asignado:</label>
+              <select id="user-role" name="user-role" required aria-required="true">
+                <option value="estudiante">Estudiante</option>
+                <option value="docente">Docente</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="user-status">Estado inicial:</label>
+              <select id="user-status" name="user-status" required aria-required="true">
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Registrar Usuario</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tabla de Directorio de Usuarios -->
+      <div class="table-responsive card">
+        <h3 class="card-title">📋 Directorio de Usuarios Registrados</h3>
+        <table class="data-table" aria-label="Lista de usuarios registrados en la intranet">
+          <thead>
+            <tr>
+              <th scope="col">ID Usuario</th>
+              <th scope="col">Nombre Completo</th>
+              <th scope="col">Correo Electrónico</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>USR-101</td>
+              <td>Dra. Beatriz Fuentes Rivera</td>
+              <td>beatriz.fuentes@sanmartin.edu</td>
+              <td><span class="role-badge role-admin">Administrador</span></td>
+              <td><span class="status-pill status-active">Activo</span></td>
+              <td>
+                <button class="btn btn-sm btn-secondary" aria-label="Editar usuario Dra. Beatriz Fuentes Rivera">Editar</button>
+              </td>
+            </tr>
+            <tr>
+              <td>USR-102</td>
+              <td>Prof. Roberto Martínez Castro</td>
+              <td>roberto.martinez@sanmartin.edu</td>
+              <td><span class="role-badge role-docente">Docente</span></td>
+              <td><span class="status-pill status-active">Activo</span></td>
+              <td>
+                <button class="btn btn-sm btn-secondary" aria-label="Editar usuario Prof. Roberto Martínez Castro">Editar</button>
+              </td>
+            </tr>
+            <tr>
+              <td>USR-103</td>
+              <td>Sofía Rodríguez Martínez</td>
+              <td>sofia.rodriguez@sanmartin.edu</td>
+              <td><span class="role-badge role-estudiante">Estudiante</span></td>
+              <td><span class="status-pill status-active">Activo</span></td>
+              <td>
+                <button class="btn btn-sm btn-secondary" aria-label="Editar usuario Sofía Rodríguez Martínez">Editar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- PIE DE PÁGINA                              -->
+  <!-- ========================================== -->
+  <footer class="main-footer" role="contentinfo">
+    <div class="footer-container">
+      <p class="footer-copyright">&copy; 2026 Centro Educativo San Martín. Todos los derechos reservados.</p>
+      <p class="footer-credits">Desarrollado para el prototipo de Intranet Escolar v0.1.0.</p>
+      <p class="footer-disclaimer" aria-label="Aviso de privacidad">Aviso: Este sistema contiene información confidencial y de uso exclusivo institucional.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
