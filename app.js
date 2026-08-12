@@ -1,7 +1,7 @@
 /**
  * ==========================================================================
- * INTRANET ESCOLAR - LÓGICA DE INTERACTIVIDAD JAVASCRIPT (ES6+)
- * Centro Educativo San Martín v0.1.0
+ * INTRANET ESCOLAR - LÓGICA DE INTERACTIVIDAD Y SESIÓN (ES6+)
+ * Centro Educativo San Martín v1.0.0
  * ==========================================================================
  */
 
@@ -10,7 +10,32 @@ const STORAGE_KEYS = {
   COMUNICADOS: 'intranet_comunicados_v1',
   CALIFICACIONES: 'intranet_calificaciones_v1',
   USUARIOS: 'intranet_usuarios_v1',
-  ROLE: 'intranet_active_role_v1'
+  SESSION: 'intranet_active_session_v1'
+};
+
+// Cuentas de prueba para autenticación
+const AUTH_ACCOUNTS = {
+  'admin': {
+    username: 'admin',
+    password: '123',
+    nombre: 'Dra. Beatriz Fuentes Rivera',
+    rol: 'admin',
+    rolNombre: 'Administrador'
+  },
+  'profe': {
+    username: 'profe',
+    password: '123',
+    nombre: 'Prof. Roberto Martínez Castro',
+    rol: 'docente',
+    rolNombre: 'Docente'
+  },
+  'alumno': {
+    username: 'alumno',
+    password: '123',
+    nombre: 'Sofía Rodríguez Martínez',
+    rol: 'estudiante',
+    rolNombre: 'Estudiante / Familia'
+  }
 };
 
 // --------------------------------------------------------------------------
@@ -129,10 +154,10 @@ const DEFAULT_USUARIOS = [
 ];
 
 // --------------------------------------------------------------------------
-// 2. ESTADO DE LA APLICACIÓN
+// 2. ESTADO GLOBAL DE LA APLICACIÓN
 // --------------------------------------------------------------------------
 const state = {
-  activeRole: 'estudiante', // 'admin' | 'docente' | 'estudiante'
+  currentUser: null, // Objeto de usuario autenticado
   activeSection: 'comunicados-section',
   comunicados: [],
   calificaciones: [],
@@ -140,12 +165,14 @@ const state = {
 };
 
 // --------------------------------------------------------------------------
-// 3. FUNCIONES DE PERSISTENCIA (LOCALSTORAGE)
+// 3. PERSISTENCIA EN LOCALSTORAGE
 // --------------------------------------------------------------------------
 function loadState() {
   try {
-    const savedRole = localStorage.getItem(STORAGE_KEYS.ROLE);
-    if (savedRole) state.activeRole = savedRole;
+    const savedSession = localStorage.getItem(STORAGE_KEYS.SESSION);
+    if (savedSession) {
+      state.currentUser = JSON.parse(savedSession);
+    }
 
     const savedComunicados = localStorage.getItem(STORAGE_KEYS.COMUNICADOS);
     state.comunicados = savedComunicados ? JSON.parse(savedComunicados) : [...DEFAULT_COMUNICADOS];
@@ -165,8 +192,12 @@ function loadState() {
 
 function saveState(key) {
   try {
-    if (!key || key === STORAGE_KEYS.ROLE) {
-      localStorage.setItem(STORAGE_KEYS.ROLE, state.activeRole);
+    if (!key || key === STORAGE_KEYS.SESSION) {
+      if (state.currentUser) {
+        localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(state.currentUser));
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.SESSION);
+      }
     }
     if (!key || key === STORAGE_KEYS.COMUNICADOS) {
       localStorage.setItem(STORAGE_KEYS.COMUNICADOS, JSON.stringify(state.comunicados));
@@ -183,38 +214,143 @@ function saveState(key) {
 }
 
 // --------------------------------------------------------------------------
-// 4. MÓDULO DE CAMBIO DE ROL Y PERMISOS
+// 4. MÓDULO DE AUTENTICACIÓN Y GESTIÓN DE SESIÓN (LOGIN / LOGOUT)
 // --------------------------------------------------------------------------
-function setupRoleSelector() {
-  const roleSelect = document.getElementById('role-select');
-  if (!roleSelect) return;
+function setupAuth() {
+  const formLogin = document.getElementById('form-login');
+  const loginError = document.getElementById('login-error');
+  const btnLogout = document.getElementById('btn-logout');
+  const credButtons = document.querySelectorAll('.btn-cred');
 
-  roleSelect.value = state.activeRole;
+  // Evento submit en el formulario de Login
+  if (formLogin) {
+    formLogin.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const usernameInput = document.getElementById('login-username').value.trim().toLowerCase();
+      const passwordInput = document.getElementById('login-password').value.trim();
 
-  roleSelect.addEventListener('change', (e) => {
-    state.activeRole = e.target.value;
-    saveState(STORAGE_KEYS.ROLE);
-    applyRolePermissions();
-    renderComunicados();
-    renderCalificaciones();
-    renderUsuarios();
+      const account = AUTH_ACCOUNTS[usernameInput];
+
+      if (account && account.password === passwordInput) {
+        if (loginError) loginError.classList.add('hidden');
+        performLogin(account);
+      } else {
+        if (loginError) loginError.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Evento clic en botones de credenciales de prueba rápidas
+  credButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const userKey = btn.getAttribute('data-user');
+      const passKey = btn.getAttribute('data-pass');
+      
+      const usernameInput = document.getElementById('login-username');
+      const passwordInput = document.getElementById('login-password');
+
+      if (usernameInput && passwordInput) {
+        usernameInput.value = userKey;
+        passwordInput.value = passKey;
+      }
+
+      const account = AUTH_ACCOUNTS[userKey];
+      if (account) {
+        if (loginError) loginError.classList.add('hidden');
+        performLogin(account);
+      }
+    });
   });
 
+  // Evento clic en botón de Cerrar Sesión
+  if (btnLogout) {
+    btnLogout.addEventListener('click', performLogout);
+  }
+
+  // Verificar si hay sesión previamente guardada
+  if (state.currentUser) {
+    showAuthenticatedUI();
+  } else {
+    showLoginUI();
+  }
+}
+
+function performLogin(userObj) {
+  state.currentUser = userObj;
+  saveState(STORAGE_KEYS.SESSION);
+  showAuthenticatedUI();
+}
+
+function performLogout() {
+  state.currentUser = null;
+  saveState(STORAGE_KEYS.SESSION);
+  
+  const formLogin = document.getElementById('form-login');
+  if (formLogin) formLogin.reset();
+
+  const loginError = document.getElementById('login-error');
+  if (loginError) loginError.classList.add('hidden');
+
+  showLoginUI();
+}
+
+function showLoginUI() {
+  const loginContainer = document.getElementById('login-container');
+  const mainNav = document.getElementById('main-nav');
+  const mainContent = document.getElementById('main-content');
+  const userSessionInfo = document.getElementById('user-session-info');
+
+  if (loginContainer) loginContainer.classList.remove('hidden');
+  if (mainNav) mainNav.classList.add('hidden');
+  if (mainContent) mainContent.classList.add('hidden');
+  if (userSessionInfo) userSessionInfo.classList.add('hidden');
+}
+
+function showAuthenticatedUI() {
+  const loginContainer = document.getElementById('login-container');
+  const mainNav = document.getElementById('main-nav');
+  const mainContent = document.getElementById('main-content');
+  const userSessionInfo = document.getElementById('user-session-info');
+  const sessionUserName = document.getElementById('session-user-name');
+  const sessionUserRole = document.getElementById('session-user-role');
+
+  if (loginContainer) loginContainer.classList.add('hidden');
+  if (mainNav) mainNav.classList.remove('hidden');
+  if (mainContent) mainContent.classList.remove('hidden');
+  if (userSessionInfo) userSessionInfo.classList.remove('hidden');
+
+  if (state.currentUser) {
+    if (sessionUserName) sessionUserName.textContent = state.currentUser.nombre;
+    if (sessionUserRole) {
+      sessionUserRole.textContent = state.currentUser.rolNombre;
+      sessionUserRole.className = 'role-badge';
+      
+      if (state.currentUser.rol === 'admin') sessionUserRole.classList.add('role-admin');
+      else if (state.currentUser.rol === 'docente') sessionUserRole.classList.add('role-docente');
+      else sessionUserRole.classList.add('role-estudiante');
+    }
+  }
+
   applyRolePermissions();
+  renderComunicados();
+  renderCalificaciones();
+  renderUsuarios();
 }
 
 function applyRolePermissions() {
+  if (!state.currentUser) return;
+
+  const currentRole = state.currentUser.rol;
   const publishNoticeContainer = document.getElementById('publish-notice-container');
   const userFormCard = document.querySelector('#usuarios-section .form-card');
   const userRoleSelect = document.getElementById('user-role');
 
-  // Ajustes de interfaz según rol activo
-  if (state.activeRole === 'estudiante') {
+  if (currentRole === 'estudiante') {
     // Estudiante: Ocultar formularios de creación
     if (publishNoticeContainer) publishNoticeContainer.style.display = 'none';
     if (userFormCard) userFormCard.style.display = 'none';
-  } else if (state.activeRole === 'docente') {
-    // Docente: Puede publicar avisos, ver/editar notas, pero no crear admins
+  } else if (currentRole === 'docente') {
+    // Docente: Publica avisos y edita notas, no crea administradores
     if (publishNoticeContainer) publishNoticeContainer.style.display = 'block';
     if (userFormCard) userFormCard.style.display = 'block';
     if (userRoleSelect) {
@@ -222,8 +358,8 @@ function applyRolePermissions() {
         opt.disabled = opt.value === 'admin';
       });
     }
-  } else if (state.activeRole === 'admin') {
-    // Administrador: Todos los permisos habilitados
+  } else if (currentRole === 'admin') {
+    // Administrador: Permisos totales
     if (publishNoticeContainer) publishNoticeContainer.style.display = 'block';
     if (userFormCard) userFormCard.style.display = 'block';
     if (userRoleSelect) {
@@ -244,7 +380,6 @@ function setupNavigation() {
       const targetSectionId = btn.getAttribute('data-section');
       if (!targetSectionId) return;
 
-      // Actualizar estado de navegación
       navButtons.forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
@@ -252,7 +387,6 @@ function setupNavigation() {
       btn.classList.add('active');
       btn.setAttribute('aria-selected', 'true');
 
-      // Alternar visibilidad de secciones
       sections.forEach(sec => {
         if (sec.id === targetSectionId) {
           sec.classList.add('active-section');
@@ -327,13 +461,15 @@ function setupComunicadosForm() {
       return;
     }
 
+    const authorName = state.currentUser ? state.currentUser.nombre : 'Dirección Académica';
+
     const newComunicado = {
       id: Date.now(),
       titulo: titleInput.value.trim(),
       categoria: categorySelect.value,
       destinatarios: targetSelect.value,
       contenido: contentTextarea.value.trim(),
-      autor: state.activeRole === 'admin' ? 'Dirección General' : 'Profesor de Asignatura',
+      autor: authorName,
       fecha: new Date().toISOString().split('T')[0]
     };
 
@@ -369,7 +505,7 @@ function renderCalificaciones() {
     return;
   }
 
-  const isEditable = (state.activeRole === 'admin' || state.activeRole === 'docente');
+  const isEditable = state.currentUser && (state.currentUser.rol === 'admin' || state.currentUser.rol === 'docente');
 
   filteredData.forEach(item => {
     const statusClass = item.promedio >= 6.0 ? 'status-approved' : 'status-reprobated';
@@ -401,7 +537,6 @@ function renderCalificaciones() {
     tbody.appendChild(tr);
   });
 
-  // Listeners para edición de notas en línea
   if (isEditable) {
     tbody.querySelectorAll('.grade-input').forEach(input => {
       input.addEventListener('change', handleGradeInputChange);
@@ -550,14 +685,9 @@ function formatDate(dateString) {
 // --------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
-  setupRoleSelector();
+  setupAuth();
   setupNavigation();
   setupComunicadosForm();
   setupCalificacionesFilters();
   setupUsuariosForm();
-
-  // Renderizado inicial de vistas
-  renderComunicados();
-  renderCalificaciones();
-  renderUsuarios();
 });

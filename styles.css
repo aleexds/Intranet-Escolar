@@ -1,6 +1,6 @@
 /* ==========================================================================
    INTRANET ESCOLAR - SISTEMA DE ESTILOS CSS
-   Centro Educativo San Martín v0.1.0
+   Centro Educativo San Martín v1.0.0
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -97,6 +97,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Utilidad para Ocultar Elementos */
+.hidden {
+  display: none !important;
+}
+
 /* Acceso Accesible Solo Lectores de Pantalla */
 .sr-only {
   position: absolute;
@@ -161,43 +166,143 @@ body {
   font-weight: 500;
 }
 
-/* Selector de Roles Simulado */
-.role-selector-container {
+/* Información de Sesión en Header */
+.user-session-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   background: rgba(255, 255, 255, 0.1);
-  padding: 0.5rem 0.875rem;
+  padding: 0.4rem 1rem;
   border-radius: var(--radius-full);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.role-label {
-  font-size: 0.85rem;
-  color: #e2e8f0;
-  font-weight: 500;
+.user-details {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
-.role-dropdown {
-  background: var(--primary-dark);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.35rem 0.75rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
+.user-name {
+  font-size: 0.875rem;
   font-weight: 600;
-  cursor: pointer;
-  outline: none;
-  transition: var(--transition-fast);
-}
-
-.role-dropdown:focus {
-  border-color: #93c5fd;
-  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.4);
+  color: #ffffff;
 }
 
 /* --------------------------------------------------------------------------
-   4. BARRA DE NAVEGACIÓN (.main-navigation)
+   4. PANTALLA Y FORMULARIO DE LOGIN (.login-container)
+   -------------------------------------------------------------------------- */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 160px);
+  padding: 2rem 1rem;
+  background: radial-gradient(circle at center, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.login-card {
+  max-width: 440px;
+  width: 100%;
+  padding: 2.25rem;
+  border-top: 5px solid var(--primary-blue);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-card);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-logo {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.login-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.login-error {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid #fca5a5;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Panel de Credenciales de Prueba */
+.test-credentials {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.credentials-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.credentials-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-cred {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-cred:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.btn-cred code {
+  background-color: #e2e8f0;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  color: var(--primary-navy);
+}
+
+/* --------------------------------------------------------------------------
+   5. BARRA DE NAVEGACIÓN (.main-navigation)
    -------------------------------------------------------------------------- */
 .main-navigation {
   background-color: var(--bg-card);
@@ -249,7 +354,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   5. CONTENIDO PRINCIPAL Y SECCIONES
+   6. CONTENIDO PRINCIPAL Y SECCIONES
    -------------------------------------------------------------------------- */
 .main-container {
   flex: 1;
@@ -289,7 +394,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   6. TARJETAS Y GRID (.card, .cards-grid)
+   7. TARJETAS Y GRID (.card, .cards-grid)
    -------------------------------------------------------------------------- */
 .card {
   background-color: var(--bg-card);
@@ -389,7 +494,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   7. FORMULARIOS (.app-form)
+   8. FORMULARIOS (.app-form)
    -------------------------------------------------------------------------- */
 .form-card {
   background-color: var(--bg-card);
@@ -449,7 +554,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   8. TABLAS DE DATOS (.data-table, .table-responsive)
+   9. TABLAS DE DATOS (.data-table, .table-responsive)
    -------------------------------------------------------------------------- */
 .filter-bar {
   display: flex;
@@ -568,7 +673,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   9. BOTONES (.btn)
+   10. BOTONES (.btn)
    -------------------------------------------------------------------------- */
 .btn {
   display: inline-flex;
@@ -617,7 +722,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   10. PIE DE PÁGINA (.main-footer)
+   11. PIE DE PÁGINA (.main-footer)
    -------------------------------------------------------------------------- */
 .main-footer {
   background-color: var(--primary-dark);
@@ -644,7 +749,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   11. DISEÑO RESPONSIVO (MEDIA QUERIES)
+   12. DISEÑO RESPONSIVO (MEDIA QUERIES)
    -------------------------------------------------------------------------- */
 @media (max-width: 992px) {
   .top-header {
@@ -663,7 +768,7 @@ body {
     gap: 1rem;
   }
 
-  .role-selector-container {
+  .user-session-info {
     width: 100%;
     justify-content: space-between;
   }
