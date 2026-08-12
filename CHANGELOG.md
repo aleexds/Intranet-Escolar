@@ -6,12 +6,33 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ---
 
-## [Unreleased]
+## [1.0.0] - 2026-08-12
 
-### Por Añadir
-- Implementación de la interfaz gráfica base en `index.html`.
-- Sistema de diseño y temas claro/oscuro en `styles.css`.
-- Lógica de navegación SPA y persistencia mock en `app.js`.
+### Añadido
+- **Maquetación y Estructura HTML5 Semántica (`index.html`)**:
+  - Encabezado principal con título institucional, distintivo de versión y selector de rol simulado.
+  - Navegación principal accesible por pestañas para alternar vistas.
+  - Sección de **Avisos y Comunicados Institucionales** con formulario de publicación y tarjetas de noticias.
+  - Sección de **Registro de Calificaciones y Asistencia** con filtros de periodo, asignatura y grupo, e insumos de tabla editables.
+  - Sección de **Administración de Usuarios** con formulario de registro de nuevos integrantes y directorio en tabla.
+  - Pie de página con créditos, año y aviso de confidencialidad.
+
+- **Sistema de Diseño Visual y CSS Responsivo (`styles.css`)**:
+  - Implementación de tokens con variables CSS (`:root`) para paleta de azules institucionales, neutros slate y colores de estado (aprobado/reprobado/urgente).
+  - Normalización de estilos base y utilidades de accesibilidad (`.sr-only`).
+  - Tarjetas del tablón con elevación visual `:hover` y badges de categoría.
+  - Formularios alineados con campos interactivos y *focus-ring* azul.
+  - Tablas de datos con bordes suaves, filas alternadas (*zebra-striping*) y pastillas de estado (`.status-pill`).
+  - Insignias visuales por rol (`.role-admin`, `.role-docente`, `.role-estudiante`).
+  - Reglas *media queries* para adaptabilidad en pantallas de escritorio, tablets y dispositivos móviles.
+
+- **Lógica e Interactividad en JavaScript Vanilla (`app.js`)**:
+  - Estructura de estado global con datos simulados iniciales (*Mock Data*) para comunicados, calificaciones y usuarios.
+  - Sistema de simulación dinámica de permisos por rol activo (*Estudiante*, *Docente*, *Administrador*), ajustando visibilidad de formularios y capacidad de edición en tiempo real.
+  - Módulo de comunicados con publicación e inserción dinámica en el DOM.
+  - Módulo de calificaciones con recálculo automático de promedios `(Trabajos + Examen) / 2` y actualización de estado (*Aprobado/Reprobado*).
+  - Módulo de directorio de usuarios con altas y alternancia de estado (*Activo/Inactivo*).
+  - Persistencia de datos local en `localStorage` para conservar modificaciones tras recargar el navegador.
 
 ---
 
